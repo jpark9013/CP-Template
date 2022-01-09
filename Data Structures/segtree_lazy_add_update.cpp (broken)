@@ -1,0 +1,108 @@
+struct LSegTree {
+		using ftype = function<ll(ll, ll)>;
+		LSegTree() {}
+		LSegTree(const vector<ll> &v, ll U, const ftype &F) : U(U), F(F) {
+        range = sz(v);
+        node n; n.sum = U;
+        tree.assign(4*range, n);
+        build_recur(v, 0, range-1, 0);
+    }
+    ll get(int L, int R) {return range_query_recur(0, 0, range - 1, L, R);}
+    void add(int L, int R, ll X) {incUpdate_recur(0,0,range-1,L,R,X);}
+    void update(int L, int R, ll X) {setUpdate_recur(0,0,range-1,L,R,X);}
+    private:
+		struct node {
+	    ll sum;
+	    ll setAll;
+	    ll increment;
+	    bool setAllValid;
+	    node() {
+	       sum = 0;
+	       setAllValid = 0;
+	       increment = 0;
+	    }
+    	void Reset() {
+       	setAllValid = increment = 0;
+    	}
+		};
+    int range;
+    vector<node> tree;
+    ftype F;
+    ll U;
+    void build_recur(const vector<ll> &v, int l, int r, int node_no) {
+        if (l == r) {
+            if (l < sz(v)) tree[node_no].sum = v[l];
+            else tree[node_no].sum = U;
+            return;
+        }
+        int mid = (l+r)/2;
+        build_recur(v, l, mid, 2*node_no + 1);
+        build_recur(v, mid + 1, r, 2*node_no + 2);
+        tree[node_no].sum = F(tree[2*node_no + 1].sum, tree[2*node_no + 2].sum);
+    }
+    void incUpdate_recur(int node, int l, int r, int& L, int& R, ll X) {
+        if (r < L || R < l || l >= range) return;
+        if (L <= l && R >= r) {
+            tree[node].increment += X;
+            return;
+        }
+        applyAggr(node,l,r);
+        int mid = (l+r)/2;
+        incUpdate_recur(2*node+1,l,mid,L,R,X);
+        incUpdate_recur(2*node+2,mid+1,r,L,R,X);
+        applyAggr(2*node+1, l, mid);
+        applyAggr(2*node+2, mid+1, r);
+        tree[node].sum = F(tree[2*node+1].sum, tree[2*node+2].sum);
+    }
+    void setUpdate_recur(int node, int l, int r, int& L, int& R, ll X) {
+        if (r < L || R < l || l >= range) return;
+        if (L <= l && R >= r) {
+            tree[node].setAllValid = 1;
+            tree[node].setAll = X;
+            tree[node].increment = 0;
+            return;
+        }
+        applyAggr(node,l,r);
+        int mid = (l+r)/2;
+        setUpdate_recur(2*node+1,l,mid,L,R,X);
+        setUpdate_recur(2*node+2,mid+1,r,L,R,X);
+        applyAggr(2*node+1, l, mid);
+        applyAggr(2*node+2, mid+1, r);
+        tree[node].sum = F(tree[2*node+1].sum, tree[2*node+2].sum);
+    }
+    void compose(int par, int child) {
+        if (tree[par].setAllValid) {
+            tree[child].setAllValid = 1;
+            tree[child].setAll = tree[par].setAll;
+            tree[child].increment = tree[par].increment;
+        }
+        else tree[child].increment += tree[par].increment;
+    }
+    void applyAggr(int node, int l, int r) {
+        if(tree[node].setAllValid)
+            tree[node].sum = (r-l+1)*tree[node].setAll;
+ 
+        tree[node].sum += (r-l+1)*tree[node].increment;
+ 
+        if (l != r) {
+            compose(node, 2*node + 1);
+            compose(node, 2*node + 2);
+        }
+ 
+        tree[node].Reset();
+    }
+    ll range_query_recur(int node, int l, int r, int& L, int& R) {
+        if(r < L || R < l || l >= range) return U;
+        applyAggr(node, l, r);
+        if(L <= l && R >= r) return tree[node].sum;
+        int mid = (l+r)/2;
+        return F(range_query_recur(2*node + 1, l, mid, L, R), 
+        				 range_query_recur(2*node + 2, mid+1, r, L, R));
+    }
+};
+// usage:
+// LSegTree st(vec, val, func)
+// st.get(a, b) -> gets sum (or whatever) of range(a, b)
+// st.add(a, b, c) -> adds c to range a, b 
+// st.update(a, b, c) -> sets range a, b to c
+
