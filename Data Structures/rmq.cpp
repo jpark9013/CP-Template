@@ -16,11 +16,11 @@ struct RMQ {
     }
   }
 
-	void check(int a) {assert(a >= 0 && a <= sz(t[0]));}
+  void check(int a) {assert(a >= 0 && a <= sz(t[0]));}
 
   // returns f(a[l..r]) in O(1) time
   T get(int l, int r) {
-  	check(l); check(r); assert(r >= l);
+    check(l); check(r); assert(r >= l);
     int h = floor(log2(r-l+1));
     return f(t[h][l], t[h][r-(1<<h)+1]);
   }

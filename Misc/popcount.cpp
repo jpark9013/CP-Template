@@ -1,7 +1,7 @@
 inline short ones(short x) {
-	short count = 0;
+  short count = 0;
   __asm__ volatile("POPCNT %1, %0;"
-			:"=r"(count)
+      :"=r"(count)
       :"r"(x)
       :
   );
@@ -9,11 +9,11 @@ inline short ones(short x) {
 }
 
 inline int ones(int x) {
-	int count = 0;
-	__asm__ volatile("POPCNT %1, %0;"
-		:"=r"(count)
-		:"r"(x)
-		:
-	);
-	return count;
+  int count = 0;
+  __asm__ volatile("POPCNT %1, %0;"
+    :"=r"(count)
+    :"r"(x)
+    :
+  );
+  return count;
 }

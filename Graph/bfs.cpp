@@ -20,7 +20,7 @@ struct BFS {
 
       for (int j : adj[i]) {
         if (distance[j] != -1)
-					continue;
+          continue;
 
         q.push(j);
         distance[j] = distance[i] + 1;

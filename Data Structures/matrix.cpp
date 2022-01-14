@@ -72,7 +72,7 @@ struct Matrix {
 
   bool operator==(const Matrix &B) const {
     if (height() != B.height() || width() != B.width()) {
-    	return false;
+      return false;
     }
     for (int i = 0; i < height(); i++)
       for (int j = 0; j < width(); j++)
@@ -133,64 +133,64 @@ struct Matrix {
   }
   
   Matrix inverse() {
-  	assert(height() == width());
-  	Matrix A = *this;
-  	int n = height();
-	  vector<T> col(n);
-	  vector<vector<T>> tmp(n,vector<T>(n));
-	  for (int i = 0; i < n; i++) {
-	    tmp[i][i] = 1;
-	    col[i] = i;
-	  }
-	  for (int i = 0; i < n; i++) {
-	    int r = i, c = i;
-	    for (int j = i; j < n; j++) {
-	      for (int k = i; k < n; k++) {
-	        if (A[j][k] != 0) {
-	          r = j;
-	          c = k;
-	          goto found;
-	        }
-	      }
-	    }
-	    
-	    return Matrix({});
-			
-			found:;
-	    
-	    A[i].swap(A[r]);
-	    tmp[i].swap(tmp[r]);
-	    for (int j =0; j < n; j++) {
-	      swap(A[j][i], A[j][c]);
-	      swap(tmp[j][i],tmp[j][c]);
-	    }
-	    swap(col[i],col[c]);
-	    T v = 1 / A[i][i];
-	    for (int j = i+1; j < n; j++) {
-				T f = A[j][i]*v;
-	      A[j][i] = 0;
-	      for (int k = i+1; k < n; k++)
-	        A[j][k] -= f*A[i][k];
-	      for (int k = 0; k < n; k++)
-	        tmp[j][k] -= f*tmp[i][k];
-	    }
-	    for (int j = i+1; j < n; j++)
-	      A[i][j] *= v;
-	    for (int j =0; j < n; j++)
-	      tmp[i][j] *= v;
-	    A[i][i] = 1;
-	  }
-	  for (int i = n-1; i >= 0; i--) {
-	    for (int j = 0; j < i; j++) {
-	      T v = A[j][i];
-	      for (int k = 0; k < n; k++)
-	        tmp[j][k] -= v*tmp[i][k];
-	    }
-	  }
-	  for (int i = 0; i < n; i++)
-	    for (int j = 0; j < n; j++)
-	      A[col[i]][col[j]] = tmp[i][j];
-	  	
-	  return A;
+    assert(height() == width());
+    Matrix A = *this;
+    int n = height();
+    vector<T> col(n);
+    vector<vector<T>> tmp(n,vector<T>(n));
+    for (int i = 0; i < n; i++) {
+      tmp[i][i] = 1;
+      col[i] = i;
+    }
+    for (int i = 0; i < n; i++) {
+      int r = i, c = i;
+      for (int j = i; j < n; j++) {
+        for (int k = i; k < n; k++) {
+          if (A[j][k] != 0) {
+            r = j;
+            c = k;
+            goto found;
+          }
+        }
+      }
+      
+      return Matrix({});
+      
+      found:;
+      
+      A[i].swap(A[r]);
+      tmp[i].swap(tmp[r]);
+      for (int j =0; j < n; j++) {
+        swap(A[j][i], A[j][c]);
+        swap(tmp[j][i],tmp[j][c]);
+      }
+      swap(col[i],col[c]);
+      T v = 1 / A[i][i];
+      for (int j = i+1; j < n; j++) {
+        T f = A[j][i]*v;
+        A[j][i] = 0;
+        for (int k = i+1; k < n; k++)
+          A[j][k] -= f*A[i][k];
+        for (int k = 0; k < n; k++)
+          tmp[j][k] -= f*tmp[i][k];
+      }
+      for (int j = i+1; j < n; j++)
+        A[i][j] *= v;
+      for (int j =0; j < n; j++)
+        tmp[i][j] *= v;
+      A[i][i] = 1;
+    }
+    for (int i = n-1; i >= 0; i--) {
+      for (int j = 0; j < i; j++) {
+        T v = A[j][i];
+        for (int k = 0; k < n; k++)
+          tmp[j][k] -= v*tmp[i][k];
+      }
+    }
+    for (int i = 0; i < n; i++)
+      for (int j = 0; j < n; j++)
+        A[col[i]][col[j]] = tmp[i][j];
+      
+    return A;
   }
 };

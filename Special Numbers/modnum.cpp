@@ -146,9 +146,9 @@ using mod = Modular<std::integral_constant<decay<decltype(_MOD)>::type, _MOD>>;
  
 // find mod of a^b
 // mod expo(int a, int b) { 
-	// assert(b >= 0);
-	// if (b >= _MOD-1) b %= (_MOD-1);
-	// return power(mod(a), b);
+  // assert(b >= 0);
+  // if (b >= _MOD-1) b %= (_MOD-1);
+  // return power(mod(a), b);
 // }
 
 // typedef int32_t ModType;

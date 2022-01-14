@@ -12,8 +12,8 @@ std::vector<int> Z(const std::string str) {
     }
     int k = 1;
     while (i + k < n && k + res[k] < j) {
-    	res[i + k] = res[k];
-    	k++;
+      res[i + k] = res[k];
+      k++;
     }
     i += k;
     j -= k;
